@@ -5,35 +5,34 @@ use App\Tienda\Models\Compra;
 use App\Tienda\Models\DetalleCompra;
 use App\Tienda\Models\Proveedor;
 use App\Tienda\Models\Producto;
+use App\Core\Validation\Validator;
 use Exception;
 use Illuminate\Database\Capsule\Manager as DB;
 
-class CompraController extends BaseController {
+class CompraController extends BaseController
+{
 
     protected string $model = Compra::class;
 
     protected const RULES = [
         'proveedor_id' => [
             'required' => true,
-            'type' => 'integer',
+            'type' => 'int',
             'min' => 1
         ],
         'fecha' => [
             'required' => true,
             'type' => 'datetime'
-        ],
-        'detalles' => [
-            'required' => true,
-            'type' => 'array',
-            'min_items' => 1
         ]
     ];
 
-    public function getAll() {
+    public function getAll()
+    {
         return Compra::with(['proveedor', 'detalles.producto'])->get();
     }
 
-    public function getOne($id) {
+    public function getOne($id)
+    {
         $row = Compra::with(['proveedor', 'detalles.producto'])->find($id);
 
         if (empty($row)) {
@@ -43,44 +42,20 @@ class CompraController extends BaseController {
         return $row;
     }
 
-    public function saveData($data) {
-        $this->validarCompra($data);
+    public function saveData($data)
+    {
+        Validator::validate($data, static::RULES);
+        $this->beforeCreate($data);
 
         return DB::transaction(function () use ($data) {
-
-            $proveedor = Proveedor::find($data['proveedor_id']);
-            if (!$proveedor) {
-                throw new Exception("El proveedor no existe.", 2);
-            }
-
-            $total = 0;
-
-            foreach ($data['detalles'] as $detalle) {
-                $producto = Producto::find($detalle['producto_id']);
-
-                if (!$producto) {
-                    throw new Exception("Uno de los productos no existe.", 2);
-                }
-
-                $cantidad = (int) $detalle['cantidad'];
-                $costo = (float) $detalle['costo_unitario'];
-
-                if ($cantidad <= 0) {
-                    throw new Exception("La cantidad del detalle debe ser mayor que 0.", 2);
-                }
-
-                if ($costo <= 0) {
-                    throw new Exception("El costo unitario debe ser mayor que 0.", 2);
-                }
-
-                $total += $cantidad * $costo;
-            }
 
             $compra = new Compra();
             $compra->proveedor_id = $data['proveedor_id'];
             $compra->fecha = $data['fecha'];
-            $compra->total = $total;
+            $compra->total = 0;
             $compra->save();
+
+            $total = 0;
 
             foreach ($data['detalles'] as $detalle) {
                 $producto = Producto::find($detalle['producto_id']);
@@ -94,49 +69,63 @@ class CompraController extends BaseController {
                 $detalleCompra->costo_unitario = $costo;
                 $detalleCompra->save();
 
-                $producto->cantidad = (int) $producto->cantidad + $cantidad;
+                $producto->cantidad += $cantidad;
                 $producto->save();
+
+                $total += $cantidad * $costo;
             }
 
-            return Compra::with(['proveedor', 'detalles.producto'])->find($compra->id);
+            $compra->total = $total;
+            $compra->save();
+
+            return $this->getOne($compra->id);
         });
     }
 
-    public function modify($id, $data) {
-        throw new Exception("Modificar compras no está permitido porque afectaría el inventario. Elimina y registra una nueva compra.", 2);
-    }
-
-    public function remove($id) {
-        throw new Exception("Eliminar compras no está permitido porque afectaría el inventario histórico.", 2);
-    }
-
-    protected function validarCompra(array $data) {
-
-        if (!isset($data['proveedor_id']) || (int)$data['proveedor_id'] <= 0) {
-            throw new Exception("El proveedor es obligatorio.", 2);
-        }
-
-        if (empty($data['fecha'])) {
-            throw new Exception("La fecha es obligatoria.", 2);
+    protected function beforeCreate(array &$data)
+    {
+        if (!Proveedor::find($data['proveedor_id'])) {
+            throw new Exception("El proveedor no existe.", 2);
         }
 
         if (empty($data['detalles']) || !is_array($data['detalles'])) {
             throw new Exception("Debes enviar al menos un detalle de compra.", 2);
         }
 
+        // Verificar que no haya producto_id duplicado en los detalles
+        $ids = array_column($data['detalles'], 'producto_id');
+        if (count($ids) !== count(array_unique($ids))) {
+            throw new Exception("No puedes incluir el mismo producto dos veces en una compra.", 2);
+        }
+
         foreach ($data['detalles'] as $index => $detalle) {
+            $n = $index + 1;
 
-            if (!isset($detalle['producto_id']) || (int)$detalle['producto_id'] <= 0) {
-                throw new Exception("El producto en el detalle " . ($index + 1) . " es obligatorio.", 2);
+            if (empty($detalle['producto_id'])) {
+                throw new Exception("El producto en el detalle $n es obligatorio.", 2);
             }
 
-            if (!isset($detalle['cantidad']) || (int)$detalle['cantidad'] <= 0) {
-                throw new Exception("La cantidad en el detalle " . ($index + 1) . " debe ser mayor que 0.", 2);
+            if (!Producto::find($detalle['producto_id'])) {
+                throw new Exception("El producto en el detalle $n no existe.", 2);
             }
 
-            if (!isset($detalle['costo_unitario']) || (float)$detalle['costo_unitario'] <= 0) {
-                throw new Exception("El costo unitario en el detalle " . ($index + 1) . " debe ser mayor que 0.", 2);
+            if (empty($detalle['cantidad']) || (int) $detalle['cantidad'] <= 0) {
+                throw new Exception("La cantidad en el detalle $n debe ser mayor que 0.", 2);
+            }
+
+            if (empty($detalle['costo_unitario']) || (float) $detalle['costo_unitario'] <= 0) {
+                throw new Exception("El costo unitario en el detalle $n debe ser mayor que 0.", 2);
             }
         }
+    }
+
+    public function modify($id, $data)
+    {
+        throw new Exception("Modificar compras no está permitido.", 2);
+    }
+
+    public function remove($id)
+    {
+        throw new Exception("Eliminar compras no está permitido.", 2);
     }
 }

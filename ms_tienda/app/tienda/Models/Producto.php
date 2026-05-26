@@ -5,7 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 use app\tienda\Models\DetalleCompra;
 
 
-class Producto extends Model {
+class Producto extends Model
+{
 
     protected $table = 'producto';
     public $timestamps = false;
@@ -21,11 +22,13 @@ class Producto extends Model {
         'categoria_id'
     ];
 
-    public function categoria() {
+    public function categoria()
+    {
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 
-    public function proveedores() {
+    public function proveedores()
+    {
         return $this->belongsToMany(
             Proveedor::class,
             'producto_proveedor',
@@ -34,11 +37,13 @@ class Producto extends Model {
         );
     }
 
-    public function detallesCompra() {
+    public function detallesCompra()
+    {
         return $this->hasMany(DetalleCompra::class, 'producto_id');
     }
 
-    public function detallesVenta() {
+    public function detallesVenta()
+    {
         return $this->hasMany(DetalleVenta::class, 'producto_id');
     }
 }

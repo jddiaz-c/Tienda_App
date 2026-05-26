@@ -4,7 +4,8 @@ namespace App\Tienda\Controllers;
 use App\Tienda\Models\Proveedor;
 use Exception;
 
-class ProveedorController extends BaseController {
+class ProveedorController extends BaseController
+{
 
     protected string $model = Proveedor::class;
 
@@ -32,27 +33,27 @@ class ProveedorController extends BaseController {
         ]
     ];
 
-    protected function beforeCreate(array &$data) {
+    protected function beforeCreate(array &$data)
+    {
         $data['nombre'] = trim($data['nombre']);
         $data['telefono'] = trim($data['telefono']);
         $data['ciudad'] = trim($data['ciudad']);
     }
 
-    protected function beforeUpdate(array &$data, $model) {
-        if (isset($data['nombre'])) {
+    protected function beforeUpdate(array &$data, $model)
+    {
+        if (isset($data['nombre']))
             $data['nombre'] = trim($data['nombre']);
-        }
-
-        if (isset($data['telefono'])) {
+        if (isset($data['telefono']))
             $data['telefono'] = trim($data['telefono']);
-        }
-
-        if (isset($data['ciudad'])) {
+        if (isset($data['ciudad']))
             $data['ciudad'] = trim($data['ciudad']);
-        }
     }
 
-    protected function beforeDelete($model) {
+
+
+    protected function beforeDelete($model)
+    {
         if ($model->productos()->exists()) {
             throw new Exception("No se puede eliminar el proveedor porque tiene productos asociados.", 2);
         }

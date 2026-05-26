@@ -4,7 +4,8 @@ namespace App\Tienda\Controllers;
 use App\Tienda\Models\Cliente;
 use Exception;
 
-class ClienteController extends BaseController {
+class ClienteController extends BaseController
+{
 
     protected string $model = Cliente::class;
 
@@ -45,7 +46,8 @@ class ClienteController extends BaseController {
 
     // ---------------- CREATE ----------------
 
-    protected function beforeCreate(array &$data) {
+    protected function beforeCreate(array &$data)
+    {
 
         $data['correo'] = strtolower(trim($data['correo']));
 
@@ -60,7 +62,8 @@ class ClienteController extends BaseController {
 
     // ---------------- UPDATE ----------------
 
-    protected function beforeUpdate(array &$data, $model) {
+    protected function beforeUpdate(array &$data, $model)
+    {
 
         if (isset($data['correo'])) {
 

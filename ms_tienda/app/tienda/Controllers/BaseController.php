@@ -4,27 +4,40 @@ namespace App\Tienda\Controllers;
 use App\Core\Validation\Validator;
 use Exception;
 
-abstract class BaseController {
+abstract class BaseController
+{
 
     protected string $model = "";
     protected const RULES = [];
 
     // ---------------- HOOKS ----------------
-    protected function beforeCreate(array &$data) {}
-    protected function afterCreate($model) {}
+    protected function beforeCreate(array &$data)
+    {
+    }
+    protected function afterCreate($model)
+    {
+    }
 
-    protected function beforeUpdate(array &$data, $model) {}
-    protected function afterUpdate($model) {}
+    protected function beforeUpdate(array &$data, $model)
+    {
+    }
+    protected function afterUpdate($model)
+    {
+    }
 
-    protected function beforeDelete($model) {}
+    protected function beforeDelete($model)
+    {
+    }
 
     // ---------------- CORE METHODS ----------------
 
-    function getAll() {
+    function getAll()
+    {
         return ($this->model)::all();
     }
 
-    function getOne($id) {
+    function getOne($id)
+    {
         $nombre = class_basename($this->model);
 
         $row = ($this->model)::find($id);
@@ -36,7 +49,8 @@ abstract class BaseController {
         return $row;
     }
 
-    function saveData($data) {
+    function saveData($data)
+    {
 
         // validar estructura
         Validator::validate($data, static::RULES);
@@ -54,7 +68,8 @@ abstract class BaseController {
         return $model;
     }
 
-    function modify($id, $data) {
+    function modify($id, $data)
+    {
 
         $model = $this->getOne($id);
 
@@ -73,7 +88,8 @@ abstract class BaseController {
         return $model;
     }
 
-    function remove($id) {
+    function remove($id)
+    {
 
         $model = $this->getOne($id);
 

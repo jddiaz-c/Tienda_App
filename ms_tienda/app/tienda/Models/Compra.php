@@ -2,10 +2,11 @@
 namespace App\Tienda\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use app\tienda\Models\Proveedor;
-use app\tienda\Models\DetalleCompra;
+use app\Tienda\Models\Proveedor;
+use app\Tienda\Models\DetalleCompra;
 
-class Compra extends Model {
+class Compra extends Model
+{
 
     protected $table = 'compra';
     public $timestamps = false;
@@ -16,11 +17,13 @@ class Compra extends Model {
         'total'
     ];
 
-    public function proveedor() {
+    public function proveedor()
+    {
         return $this->belongsTo(Proveedor::class, 'proveedor_id');
     }
 
-    public function detalles() {
+    public function detalles()
+    {
         return $this->hasMany(DetalleCompra::class, 'compra_id');
     }
 }

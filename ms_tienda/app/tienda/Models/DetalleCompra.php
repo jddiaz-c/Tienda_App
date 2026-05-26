@@ -2,13 +2,16 @@
 namespace App\Tienda\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use app\tienda\Models\Compra;
-use app\tienda\Models\Producto;
+use app\Tienda\Models\Compra;
+use app\Tienda\Models\Producto;
 
-class DetalleCompra extends Model {
+class DetalleCompra extends Model
+{
 
     protected $table = 'detalle_compra';
     public $timestamps = false;
+    public $incrementing = false;
+    protected $primaryKey = ['compra_id', 'producto_id'];
 
     protected $fillable = [
         'compra_id',
@@ -17,11 +20,13 @@ class DetalleCompra extends Model {
         'costo_unitario'
     ];
 
-    public function compra() {
+    public function compra()
+    {
         return $this->belongsTo(Compra::class, 'compra_id');
     }
 
-    public function producto() {
+    public function producto()
+    {
         return $this->belongsTo(Producto::class, 'producto_id');
     }
 }

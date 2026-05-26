@@ -4,7 +4,8 @@ namespace App\Tienda\Controllers;
 use App\Tienda\Models\Categoria;
 use Exception;
 
-class CategoriaController extends BaseController {
+class CategoriaController extends BaseController
+{
 
     protected string $model = Categoria::class;
 
@@ -26,7 +27,8 @@ class CategoriaController extends BaseController {
 
     // ---------------- CREATE ----------------
 
-    protected function beforeCreate(array &$data) {
+    protected function beforeCreate(array &$data)
+    {
 
         $data['nombre'] = strtolower(trim($data['nombre']));
 
@@ -41,7 +43,8 @@ class CategoriaController extends BaseController {
 
     // ---------------- UPDATE ----------------
 
-    protected function beforeUpdate(array &$data, $model) {
+    protected function beforeUpdate(array &$data, $model)
+    {
 
         if (isset($data['nombre'])) {
 
@@ -65,7 +68,8 @@ class CategoriaController extends BaseController {
 
     // ---------------- DELETE ----------------
 
-    protected function beforeDelete($model) {
+    protected function beforeDelete($model)
+    {
 
         if ($model->productos()->exists()) {
             throw new Exception("No se puede eliminar la categoría porque tiene productos asociados.", 2);

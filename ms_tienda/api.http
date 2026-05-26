@@ -1,0 +1,36 @@
+#### CLIENTES
+
+### consultar todos los clientes
+GET http://127.0.0.1:8000/clientes
+
+
+### consultar cliente
+GET http://127.0.0.1:8000/clientes/1
+
+
+### crear cliente
+POST http://127.0.0.1:8000/clientes
+Content-Type: application/json
+
+{
+  "cedula": "12345",
+  "nombre": "juan",
+  "apellido": "diaz",
+  "telefono": "prueba@mail.com",
+  "correo": "23232"
+}
+
+
+### modificar cliente
+PUT http://127.0.0.1:8000/clientes/1
+Content-Type: application/json
+
+{
+  "nombre": "a",
+  "fecha_inicio": "2026-05-01",
+  "fecha_fin": "2026-05-15"
+}
+
+
+### borrar cliente
+DELETE http://127.0.0.1:8000/clientes/2

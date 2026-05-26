@@ -4,46 +4,86 @@ namespace App\Tienda\Controllers;
 use App\Tienda\Models\Cliente;
 use Exception;
 
-class ClienteController extends BaseController
-{
-    protected const CAMPOS_OBLIGATORIOS = ['cedula', 'nombre', 'apellido', 'telefono', 'correo'];
-    protected const LONGITUDES_MAXIMAS = [
-    'cedula'   => 20,
-    'nombre'   => 50,
-    'apellido' => 50,
-    'telefono' => 20,
-    'correo'   => 100,
-];
+class ClienteController extends BaseController {
+
     protected string $model = Cliente::class;
-    protected function checkData($data, $excludeId = null)
-    {
-        parent::checkData($data);
 
-        // Validar formato de correo
-        if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("El correo '$data[correo]' no tiene un formato válido.", 3);
+    protected const RULES = [
+        'cedula' => [
+            'required' => true,
+            'type' => 'string',
+            'min' => 5,
+            'max' => 20,
+            'regex' => '/^[0-9]+$/'
+        ],
+        'nombre' => [
+            'required' => true,
+            'type' => 'string',
+            'min' => 3,
+            'max' => 50,
+            'regex' => '/^[a-zA-ZÁÉÍÓÚáéíóúñÑ ]+$/'
+        ],
+        'apellido' => [
+            'required' => true,
+            'type' => 'string',
+            'min' => 3,
+            'max' => 50,
+            'regex' => '/^[a-zA-ZÁÉÍÓÚáéíóúñÑ ]+$/'
+        ],
+        'telefono' => [
+            'required' => true,
+            'type' => 'string',
+            'min' => 7,
+            'max' => 20,
+            'regex' => '/^[0-9]+$/'
+        ],
+        'correo' => [
+            'required' => true,
+            'type' => 'email'
+        ]
+    ];
+
+    // ---------------- CREATE ----------------
+
+    protected function beforeCreate(array &$data) {
+
+        $data['correo'] = strtolower(trim($data['correo']));
+
+        if (Cliente::where('cedula', $data['cedula'])->exists()) {
+            throw new Exception("La cédula ya está registrada.", 2);
         }
 
-        // Validar formato de teléfono
-        if (!preg_match('/^[+0-9\s\-]{7,20}$/', $data['telefono'])) {
-            throw new Exception("El teléfono '$data[telefono]' no tiene un formato válido.", 3);
-        }
-
-        // Validar cédula única
-        $query = Cliente::where('cedula', $data['cedula']);
-        if ($excludeId !== null) {
-            $query->where('id', '!=', $excludeId);
-        }
-        if ($query->exists()) {
-            throw new Exception("Ya existe un cliente con la cédula '$data[cedula]'.", 2);
+        if (Cliente::where('correo', $data['correo'])->exists()) {
+            throw new Exception("El correo ya está registrado.", 2);
         }
     }
-    function modify($id, $data)
-    {
-        $this->checkData($data, $id);
-        $model = $this->getOne($id);
-        $model->fill($data);
-        $model->save();
-        return $model;
+
+    // ---------------- UPDATE ----------------
+
+    protected function beforeUpdate(array &$data, $model) {
+
+        if (isset($data['correo'])) {
+
+            $data['correo'] = strtolower(trim($data['correo']));
+
+            $existe = Cliente::where('correo', $data['correo'])
+                ->where('id', '!=', $model->id)
+                ->exists();
+
+            if ($existe) {
+                throw new Exception("El correo ya está en uso.", 2);
+            }
+        }
+
+        if (isset($data['cedula'])) {
+
+            $existe = Cliente::where('cedula', $data['cedula'])
+                ->where('id', '!=', $model->id)
+                ->exists();
+
+            if ($existe) {
+                throw new Exception("La cédula ya está en uso.", 2);
+            }
+        }
     }
 }

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda — Panel de Gestión</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Ir al contenido</a>
+
+<div class="shell">
+
+  <!-- ── SIDEBAR ────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="sidebar__logo">TS</div>
+      <div class="sidebar__brand-text">
+        <span class="sidebar__brand-name">Tienda Store</span>
+        <span class="sidebar__brand-tag">Panel Admin</span>
+      </div>
+    </div>
+
+    <nav class="sidebar__section">
+      <p class="sidebar__section-label">General</p>
+      <button class="nav-link active"
+        data-nav="dashboard"
+        data-section="Inicio"
+        data-label="Dashboard">
+        <span class="nav-link__icon">📊</span> Dashboard
+      </button>
+    </nav>
+
+    <nav class="sidebar__section">
+      <p class="sidebar__section-label">Catálogo</p>
+      <button class="nav-link"
+        data-nav="categorias"
+        data-section="Catálogo"
+        data-label="Categorías">
+        <span class="nav-link__icon">🏷️</span> Categorías
+      </button>
+      <button class="nav-link"
+        data-nav="productos"
+        data-section="Catálogo"
+        data-label="Productos">
+        <span class="nav-link__icon">📦</span> Productos
+      </button>
+    </nav>
+
+    <nav class="sidebar__section">
+      <p class="sidebar__section-label">Personas</p>
+      <button class="nav-link"
+        data-nav="clientes"
+        data-section="Personas"
+        data-label="Clientes">
+        <span class="nav-link__icon">👤</span> Clientes
+      </button>
+      <button class="nav-link"
+        data-nav="proveedores"
+        data-section="Personas"
+        data-label="Proveedores">
+        <span class="nav-link__icon">🚚</span> Proveedores
+      </button>
+    </nav>
+
+    <nav class="sidebar__section">
+      <p class="sidebar__section-label">Operaciones</p>
+      <button class="nav-link"
+        data-nav="compras"
+        data-section="Operaciones"
+        data-label="Compras">
+        <span class="nav-link__icon">🛒</span> Compras
+      </button>
+      <button class="nav-link"
+        data-nav="ventas"
+        data-section="Operaciones"
+        data-label="Ventas">
+        <span class="nav-link__icon">💳</span> Ventas
+      </button>
+    </nav>
+
+    <nav class="sidebar__section">
+      <p class="sidebar__section-label">Análisis</p>
+      <button class="nav-link"
+        data-nav="reportes"
+        data-section="Análisis"
+        data-label="Reportes">
+        <span class="nav-link__icon">📈</span> Reportes
+      </button>
+    </nav>
+
+    <div class="sidebar__status">
+      <p class="sidebar__status-label">Categorías</p>
+      <p class="sidebar__status-value">Papelería · Droguería</p>
+      <p class="sidebar__status-hint">Supermercado · Aseo</p>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ───────────────────────────────── -->
+  <main class="main" id="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar__titles">
+        <p class="topbar__eyebrow" id="topbar-eyebrow">Inicio</p>
+        <h1 class="topbar__title"  id="topbar-title">Dashboard</h1>
+      </div>
+      <div class="topbar__actions">
+        <button class="btn btn-soft" onclick="location.reload()">↺ Actualizar</button>
+      </div>
+    </header>
+
+    <!-- Content area -->
+    <section class="content">
+
+      <!-- DASHBOARD -->
+      <div class="view view--active" data-view="dashboard" id="view-dashboard">
+        <div class="loading-row"><div class="spinner"></div> Cargando dashboard…</div>
+      </div>
+
+      <!-- CATEGORIAS -->
+      <div class="view" data-view="categorias" id="view-categorias">
+        <div class="loading-row"><div class="spinner"></div></div>
+      </div>
+
+      <!-- PRODUCTOS -->
+      <div class="view" data-view="productos" id="view-productos">
+        <div class="loading-row"><div class="spinner"></div></div>
+      </div>
+
+      <!-- CLIENTES -->
+      <div class="view" data-view="clientes" id="view-clientes">
+        <div class="loading-row"><div class="spinner"></div></div>
+      </div>
+
+      <!-- PROVEEDORES -->
+      <div class="view" data-view="proveedores" id="view-proveedores">
+        <div class="loading-row"><div class="spinner"></div></div>
+      </div>
+
+      <!-- COMPRAS -->
+      <div class="view" data-view="compras" id="view-compras">
+        <div class="loading-row"><div class="spinner"></div></div>
+      </div>
+
+      <!-- VENTAS -->
+      <div class="view" data-view="ventas" id="view-ventas">
+        <div class="loading-row"><div class="spinner"></div></div>
+      </div>
+
+      <!-- REPORTES -->
+      <div class="view" data-view="reportes" id="view-reportes">
+        <div class="loading-row"><div class="spinner"></div></div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<!-- Core: cargar primero en orden de dependencias -->
+<script src="js/services/api.js"></script>
+<script src="js/core/toast.js"></script>
+<script src="js/core/modal.js"></script>
+<script src="js/core/router.js"></script>
+
+<!-- Módulos -->
+<script src="js/modules/dashboard.js"></script>
+<script src="js/modules/categorias.js"></script>
+<script src="js/modules/productos.js"></script>
+<script src="js/modules/clientes.js"></script>
+<script src="js/modules/proveedores.js"></script>
+<script src="js/modules/compras.js"></script>
+<script src="js/modules/ventas.js"></script>
+<script src="js/modules/reportes.js"></script>
+
+<!-- App bootstrap -->
+<script src="js/app.js"></script>
+
+</body>
+</html>

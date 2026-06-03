@@ -19,3 +19,8 @@ router.on('reportes',    mountReportes);
 
 // Boot
 router.init();
+
+// Error global no capturado
+window.addEventListener('unhandledrejection', e => {
+    toast.error('Error inesperado: ' + (e.reason?.message || 'intenta de nuevo'));
+});

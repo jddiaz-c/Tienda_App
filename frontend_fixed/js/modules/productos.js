@@ -6,7 +6,36 @@ let _prodData = [];
 let _prodCats = [];
 
 const _fmtProd = (n) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(n);
-
+function _openProveedoresModal(producto) {
+    const m = Modal.create({
+        title: `Proveedores de ${producto.nombre}`,
+        content: `
+            <div class="form-grid">
+                ${!producto.proveedores || producto.proveedores.length === 0
+                    ? `<p style="color:var(--text-muted);text-align:center">Este producto no tiene proveedores registrados aún.</p>`
+                    : `<div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Proveedor</th>
+                                    <th>Ciudad</th>
+                                    <th>Teléfono</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${producto.proveedores.map(pv => `
+                                    <tr>
+                                        <td style="font-weight:500">${pv.nombre}</td>
+                                        <td>${pv.ciudad}</td>
+                                        <td>${pv.telefono}</td>
+                                    </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>`}
+            </div>`
+    });
+    m.open();
+}
 function _stockClass(p) {
   if (p.cantidad === 0) return 'stock-crit';
   if (p.cantidad < p.stock_minimo) return 'stock-warn';
@@ -76,6 +105,7 @@ function _renderProdTable(filter = '') {
                 <td class="${_stockClass(p)}">${p.cantidad} <small style="font-weight:400;opacity:.6">/ mín ${p.stock_minimo}</small></td>
                 <td><span class="badge badge-neutral">${p.tipo_empaque}</span></td>
                 <td><div class="actions-cell">
+                  <button class="btn btn-sm btn-soft" data-provs="${p.id}">🚚 Proveedores</button>
                   <button class="btn btn-sm btn-soft" data-edit="${p.id}">✏️</button>
                   <button class="btn btn-sm btn-danger" data-del="${p.id}">🗑️</button>
                 </div></td>
@@ -88,6 +118,8 @@ function _renderProdTable(filter = '') {
     b.addEventListener('click', () => _openProdForm(_prodData.find(p => p.id == b.dataset.edit))));
   panel.querySelectorAll('[data-del]').forEach(b =>
     b.addEventListener('click', () => _confirmProdDelete(b.dataset.del)));
+  panel.querySelectorAll('[data-provs]').forEach(b =>
+    b.addEventListener('click', () => _openProveedoresModal(_prodData.find(p => p.id == b.dataset.provs))));
 }
 
 function _prodFormHTML(data = {}) {
@@ -203,4 +235,35 @@ function _confirmProdDelete(id) {
       toast.error(err.message);
     }
   });
+
+  function _openProveedoresModal(producto) {
+    const m = Modal.create({
+        title: `Proveedores de ${producto.nombre}`,
+        content: `
+            <div class="form-grid">
+                ${!producto.proveedores || producto.proveedores.length === 0
+                    ? `<p style="color:var(--text-muted);text-align:center">Este producto no tiene proveedores registrados aún.</p>`
+                    : `<div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Proveedor</th>
+                                    <th>Ciudad</th>
+                                    <th>Teléfono</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${producto.proveedores.map(pv => `
+                                    <tr>
+                                        <td style="font-weight:500">${pv.nombre}</td>
+                                        <td>${pv.ciudad}</td>
+                                        <td>${pv.telefono}</td>
+                                    </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>`}
+            </div>`
+    });
+    m.open();
+}
 }

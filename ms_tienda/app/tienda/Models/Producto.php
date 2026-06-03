@@ -2,7 +2,9 @@
 namespace App\Tienda\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use app\tienda\Models\DetalleCompra;
+use App\tienda\Models\DetalleCompra;
+use App\tienda\Models\DetalleVenta;
+use App\tienda\Models\Categoria;
 
 
 class Producto extends Model

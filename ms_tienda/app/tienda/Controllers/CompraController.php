@@ -72,6 +72,8 @@ class CompraController extends BaseController
                 $producto->cantidad += $cantidad;
                 $producto->save();
 
+                $producto->proveedores()->syncWithoutDetaching([$data['proveedor_id'] => []]);
+
                 $total += $cantidad * $costo;
             }
 

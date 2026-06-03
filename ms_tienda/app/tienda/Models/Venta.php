@@ -2,6 +2,8 @@
 namespace App\Tienda\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\tienda\Models\DetalleVenta;
+use App\tienda\Models\Cliente;
 
 class Venta extends Model
 {

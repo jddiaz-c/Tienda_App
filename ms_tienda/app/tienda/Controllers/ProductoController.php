@@ -59,6 +59,10 @@ class ProductoController extends BaseController
         ]
     ];
 
+    public function getAll() {
+    return Producto::with(['categoria', 'proveedores'])->get();
+}
+
     protected function beforeCreate(array &$data)
     {
         $data['codigo'] = strtoupper(trim($data['codigo']));

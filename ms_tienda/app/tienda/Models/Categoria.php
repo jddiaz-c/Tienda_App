@@ -2,6 +2,7 @@
 namespace App\Tienda\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\tienda\Models\Producto;
 
 class Categoria extends Model
 {
